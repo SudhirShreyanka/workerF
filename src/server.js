@@ -34,7 +34,10 @@ app.get('/api/backend-health', async (req, res) => {
 
     const response = await fetch(`${config.backendUrl}/health`, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' },
+      headers: { 
+        'Accept': 'application/json',
+        'Bypass-Tunnel-Reminder': 'true',
+      },
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -90,13 +93,14 @@ app.post('/api/send-email', async (req, res) => {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000); // 20s timeout for SMTP handshake
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout for Render cold-starts or SMTP handshake
 
     const backendRes = await fetch(`${config.backendUrl}/api/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${config.apiSecret}`,
+        'Bypass-Tunnel-Reminder': 'true', // Allows localtunnel/ngrok bypass without splash screen
       },
       body: JSON.stringify({ to, subject, text, html }),
       signal: controller.signal,
