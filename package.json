@@ -1,0 +1,25 @@
+{
+  "name": "email-worker-frontend",
+  "version": "1.0.0",
+  "description": "Secure Frontend and Reverse Proxy (BFF) for Email Worker deployed on Railway",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "frontend",
+    "bff",
+    "railway",
+    "email-worker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

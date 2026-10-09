@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Dispatcher Console — Test Worker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title-wrap">
+            <h1 class="brand-title">Email Dispatch Console</h1>
+            <span class="version-tag">SECURE BFF</span>
+          </div>
+          <p class="brand-subtitle">Google SMTP Testing & Delivery Verification</p>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <div class="badge status-badge" id="backendStatusBadge">
+          <span class="status-dot"></span>
+          <span id="backendStatusText">Checking Backend...</span>
+        </div>
+        <div class="badge tech-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Isolated Proxy (HTTPS)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content-grid">
+      <!-- Left Column: Compose & Dispatch Form -->
+      <section class="card form-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Compose Email</h2>
+            <p class="card-desc">Send test emails via secure backend relay</p>
+          </div>
+        </div>
+
+        <!-- Presets Toolbar -->
+        <div class="presets-toolbar">
+          <span class="presets-label">Presets:</span>
+          <div class="presets-buttons">
+            <button type="button" class="preset-pill" id="presetPingBtn">⚡ Quick Ping</button>
+            <button type="button" class="preset-pill" id="presetStandardBtn">📄 Standard Test</button>
+            <button type="button" class="preset-pill" id="presetHtmlBtn">🎨 Rich HTML</button>
+          </div>
+        </div>
+
+        <form id="emailForm" autocomplete="off">
+          <!-- Recipient Field -->
+          <div class="form-group">
+            <label for="toInput">Recipient Email <span class="required">*</span></label>
+            <div class="input-container">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="toInput" 
+                placeholder="recipient@example.com" 
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Subject Field -->
+          <div class="form-group">
+            <label for="subjectInput">Subject Line <span class="required">*</span></label>
+            <div class="input-container">
+              <span class="input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="subjectInput" 
+                placeholder="Test Email Subject" 
+                maxlength="250"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Message Body Tabs -->
+          <div class="form-group">
+            <div class="body-tabs-header">
+              <label>Message Content <span class="required">*</span></label>
+              <div class="tab-pill-group">
+                <button type="button" class="tab-btn active" id="tabTextBtn">Plain Text</button>
+                <button type="button" class="tab-btn" id="tabHtmlBtn">HTML Version</button>
+              </div>
+            </div>
+
+            <div class="tab-pane active" id="paneText">
+              <textarea 
+                id="textInput" 
+                rows="6" 
+                placeholder="Type your plain text email message here..."
+              ></textarea>
+            </div>
+
+            <div class="tab-pane" id="paneHtml">
+              <textarea 
+                id="htmlInput" 
+                rows="6" 
+                placeholder="<div style='font-family: sans-serif;'><h2 style='color:#4f46e5;'>Test Email</h2><p>This is a rich HTML email.</p></div>"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="sendBtn">
+              <span class="btn-text">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" x2="11" y1="2" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                Send Test Email
+              </span>
+              <span class="btn-loader" style="display: none;">
+                <span class="spinner"></span> Dispatching...
+              </span>
+            </button>
+            <span class="shortcut-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to send</span>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Delivery Status & Logs -->
+      <section class="card-column">
+        <!-- Receipt Card -->
+        <div class="card status-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Delivery Receipt</h2>
+              <p class="card-desc">Real-time SMTP transmission audit</p>
+            </div>
+            <button type="button" class="btn-reset-receipt" id="clearLogBtn">Reset</button>
+          </div>
+
+          <div id="resultContainer" class="result-placeholder">
+            <div class="placeholder-icon">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </div>
+            <h3 class="placeholder-title">Awaiting Dispatch</h3>
+            <p class="placeholder-desc">Enter recipient details and click Send to inspect transmission status and message ID.</p>
+          </div>
+        </div>
+
+        <!-- Compliance Banner -->
+        <div class="compliance-callout">
+          <div class="callout-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" x2="12" y1="8" y2="12"/>
+              <line x1="12" x2="12.01" y1="16" y2="16"/>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <h4 class="callout-heading">SMTP Handover Semantics</h4>
+            <p>An <strong>Accepted (200 OK)</strong> response confirms that Google's SMTP MTA accepted the message. Final inbox arrival is determined by recipient spam scoring and domain reputation.</p>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card history-card">
+          <div class="card-header history-header">
+            <div class="history-title-wrap">
+              <h3 class="card-title-sm">Session Activity Log</h3>
+              <span class="history-count" id="historyCount">0 sent</span>
+            </div>
+          </div>
+          <div class="history-list" id="historyList">
+            <p class="empty-history">No dispatch events recorded in this session.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
